@@ -9,4 +9,4 @@ The FASTQ file named 'seq_sample.fastq' in the same repository can be used as an
 
 # Installations
 
-Python 3 is required but no other packages or libraries.
+Python 3 is required but no other packages or libraries are needed.
