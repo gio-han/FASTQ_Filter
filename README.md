@@ -1,4 +1,4 @@
-# FASTQ Filter
+# Next Generation Sequencing (NGS) FASTQ Filter
 
 
 ## Description of the Project
