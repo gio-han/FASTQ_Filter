@@ -1,7 +1,7 @@
-# Next Generation Sequencing (NGS) FASTQ File Filter
+# Filter for FASTQ Files from Next Generation Sequencing (NGS)
 
 
-## Description of the Project
+## Project Description
 
 When DNA sequences are produced on a sequencer a measure of quality is required. This quality score is called the Q value and is assigned to each base as it is predicted.
 
