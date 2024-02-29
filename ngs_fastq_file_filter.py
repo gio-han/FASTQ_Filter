@@ -1,38 +1,53 @@
-with open("seq_sample.fastq") as in_file: # opens input file
-	seq_list = in_file.readlines() # reads file to list
-	q_score_list = seq_list[3::4] # creates list only containing Q scores
-avg_read_score_list = [] # creates empty list for each read's average Q score
-for read_q_scores in q_score_list: # outer for loop works through Q scores for each read
-	read_q_scores = read_q_scores.rstrip() # removes newline character to right
-	ascii_score_list = [] # makes empty list for ascii Q scores
-	for q_score in read_q_scores: # inner for loop works through Q score for each base
-		ascii_score = ord(q_score) - 64 # converts Q scores to ascii - 64
-		ascii_score_list.append(ascii_score) # adds ascii Q score to end of list
-	# calculates each read's average ascii Q score
-	avg_read_score = sum(ascii_score_list) / len(ascii_score_list)
-	avg_read_score_list.append(avg_read_score) # adds each read's ascii Q score to end of list
+""" The Python script below reads FASTQ files and filters out any read pairs
+where at least one of the sequences has an average Q score below 30. The
+script outputs 2 files. The first will contain the sequences where both reads
+have an average score above and including, 30 and the second those sequences
+that have at least 1 read with an average score below 30. """
 
-out_file_1 = open("seq_output_1.fastq", "w") # opens first output file to write to
-out_file_2 = open("seq_output_2.fastq", "w") # opens second output file to write to
-seq_list_index = 0 # sets value of index variable as 0
-# outer for loop works through pairs of average scores
-for count in range(0, len(avg_read_score_list), 2):
-	avg_1 = avg_read_score_list[count] # assigns value to average score for read 1
-	avg_2 = avg_read_score_list[count+1] # assigns value to average score for read 2
-	if avg_1 and avg_2 >= 30: # checks conditions for 1st output file
-		# takes slice with all fastq info for pair of reads
-		paired_end_read = seq_list[seq_list_index:seq_list_index+8]
-		# inner for loop works through each line of fastq info for pair of reads
-		for line in paired_end_read:
-			out_file_1.write(line) # writes line to 1st output file
-		seq_list_index += 8 # updates index variable
-	elif avg_1 or avg_2 < 30: # checks conditions for 2nd output file
-		# takes slice with all fastq info for pair of reads
-		paired_end_read = seq_list[seq_list_index:seq_list_index+8]
-		# inner for loop works through each line of fastq info for pair of reads
-		for line in paired_end_read:
-			out_file_2.write(line) # writes line to 2nd output file
-		seq_list_index += 8 # updates index variable
-	else: seq_list_index += 8 # mops up every other scenario and updates index
-out_file_1.close() # closes 1st output file
-out_file_2.close() # closes 2nd output file
+
+def filter_reads(file_name):
+    """ A function that filters reads based on
+    Q scores and writes to output files. """
+
+    with open(file_name) as in_file:
+        all_lines = in_file.readlines()
+
+    # Getting the quality score lines.
+    q_score_lines = all_lines[3::4]
+
+    good_reads = []
+    bad_reads = []
+    index = 0
+
+    # Processing the reads in pairs.
+    for count in range(0, len(q_score_lines), 2):
+        q_scores_read_1 = [ord(q_score) - 64
+                           for q_score in q_score_lines[count].rstrip()]
+        q_scores_read_2 = [ord(q_score) - 64
+                           for q_score in q_score_lines[count+1].rstrip()]
+
+        avg_q_read_1 = sum(q_scores_read_1) / len(q_scores_read_1)
+        avg_q_read_2 = sum(q_scores_read_2) / len(q_scores_read_2)
+
+        if avg_q_read_1 >= 30 and avg_q_read_2 >= 30:
+            good_reads.extend(all_lines[index : index+8])
+            index = index+8
+        else:
+            bad_reads.extend(all_lines[index: index+8])
+            index = index+8
+
+    # Writing to the output files and closing them.
+    with open("seq_output_1.fastq", "w") as out_file_1:
+        out_file_1.writelines(good_reads)
+    out_file_1.close()
+
+    with open("seq_output_2.fastq", "w") as out_file_2:
+        out_file_2.writelines(bad_reads)
+    out_file_2.close()
+
+
+# Calling the function to initiate filtering.
+filter_reads("seq_sample.fastq")
+
+
+# End-of-File (EOF)
