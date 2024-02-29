@@ -10,14 +10,6 @@ This Python script reads Next-Generation Sequencing (NGS) files in the FASTQ for
 The FASTQ file named 'seq_sample.fastq' in the same repository can be used as an example file to test the script.
 
 
-## Key Features
-
-* Q-score Threshold: Filters reads based on an average quality score of 30.
-* Categorized Outputs: Generates two output files:
-  * Sequences with both reads meeting the quality threshold.
-  * Sequences with at least one read below the quality threshold.
-
-
 ## Installations
 
 Python 3 is required but no other packages or libraries are needed.
